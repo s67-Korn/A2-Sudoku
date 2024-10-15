@@ -80,6 +80,46 @@ def save():
                 num = str(save_gird[i][j])      # take each character in save_grid 
                 save_file.write(num)            # and write it in save.txt
 
+def load():
+    with open('A2/save.txt', 'r') as save_file: # open save.txt in A2 folder in reading mode
+        content = save_file.read() #read the whole text file
+
+        if len(content) != 81: # to make sure that save.txt has exactly 81 characters
+            print("The text file does not contain 81 characters for the Sudoku grid.\n")
+            print("Please make sure the text file has exactly 81 characters.")
+            sys.exit()
+
+        for i in range(len(sudoku_grid)): 
+            num_row = content[i*9:(i+1)*9] # take 9 characters each loop
+            row = [] # set in row loop to reset it when enter a new row loop
+
+            for j in range(len(sudoku_grid[i])):
+                if sudoku_grid[i][j] == 0:
+                # if the number in sudoku_grid is 0,
+                # it means this grid must be an entry
+                    if num_row[j] != '0':
+                    # if the read number isn't 0. The entry will show the number as typed
+                        entry = Entry(window, width=3, font=('Courier', 24),
+                                      justify='center', fg='#000000', borderwidth=2)
+                        entry.insert(0, num_row[j]) # insert the number
+                        entry.grid(row=i, column=j, padx=5, pady=5)
+                    else:
+                    # if the read number isn't 0. The entry will be empty
+                        entry = Entry(window, width=3, font=('Courier', 24),
+                                      justify='center', fg='#000000', borderwidth=2)
+                        entry.grid(row=i, column=j, padx=5, pady=5)
+                    row.append(entry) # append entry to row
+
+                else:
+                # if the number in sudoku_grid is not 0,
+                # it means this grid must be a lebel
+                    label = Label(window, text=str(sudoku_grid[i][j]), width=3,
+                                  font=('Courier', 24), justify='center', fg='#000000',
+                                  borderwidth=2)
+                    label.grid(row=i, column=j, padx=5, pady=5)
+                    row.append(sudoku_grid[i][j]) # append label to row
+            entry_gird[i] = row # give the row in entry_grid a new value
+
 def submit_button():
     submit_button=Button(window, text="Submit", font=('Courier', 24), command=check)        # create a submit button that will run check() when clicked
     submit_button.grid(row=5, column=11, padx=5, pady=5)
@@ -88,7 +128,9 @@ def save_button():
     save_button=Button(window, text="Save", font=('Courier', 24), command=save)
     save_button.grid(row=6, column=11, padx=5, pady=5)
 
-
+def load_button():
+    load_button=Button(window, text="Load Save", font=('Courier', 24), command=load)
+    load_button.grid(row=7, column=11, padx=5, pady=5)
 
 window = Tk()               # instantiate a window           
 window.title("• Sudoku •")  # set window name
